@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  redis:
+    image: "redis:6.2-alpine"
+    container_name: redis_practice
+    hostname: redis
+    ports:
+      - 6379:6379
+    command:
+      ["redis-server", "--appendonly", "yes", "--requirepass", "password"]
+    environment:
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG
+    volumes:
+      - redis-data:/data
+    restart: always
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:password
+      - REDIS_PASSWORD=password
+      - HTTP_USER=root
+      - HTTP_PASSWORD=root
+    ports:
+      - 8081:8081
+    depends_on:
+      - redis
+    restart: always
+
+volumes:
+  redis-data:
