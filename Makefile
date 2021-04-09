@@ -17,3 +17,7 @@ pg:
 .PHONY: cassandra
 cassandra:
 	docker-compose -f docker-compose-cassandra.yml up -d
+
+.PHONY: ignite
+ignite:
+	docker-compose -f docker-compose-ignite.yml up -d
