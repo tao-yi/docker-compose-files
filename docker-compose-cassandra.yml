@@ -1,22 +1,85 @@
 version: "3.9"
 
 services:
-  cassandra:
-    image: "docker.io/bitnami/cassandra:3-debian-10"
+  cassandra1:
+    image: docker.io/bitnami/cassandra:latest
     ports:
-      - "7000:7000"
-      - "9042:9042"
+      - 7000:7000
+      - 9042:9042
     volumes:
-      - "cassandra_data:/bitnami"
+      - cassandra1_data:/bitnami
+    networks:
+      - cassandra_network
     environment:
-      - CASSANDRA_SEEDS=cassandra
+      # A seed node is used to bootstrap the gossip process for new nodes joining a cluster.
+      # The first time you bring up a node in a new cluster, only one node is the seed node.
+      # Hosts that will act as Cassandra seeds. No defaults.
+      - CASSANDRA_SEEDS=cassandra1
+      # Cluster name to configure Cassandra.. Defaults: My Cluster
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      # In clusters, only one node should be marked as password seeder. Default: no
       - CASSANDRA_PASSWORD_SEEDER=yes
+      # Cassandra user name. Defaults: cassandra
+      - CASSANDRA_USER=cassandra
+      # Cassandra user password. Default: cassandra
       - CASSANDRA_PASSWORD=cassandra
       # Inter-node cluster communication port. Default: 7000
-      - CASSANDRA_TRANSPORT_PORT_NUMBER=7000
+      # - CASSANDRA_TRANSPORT_PORT_NUMBER=7000
       # client port default 9042
-      - CASSANDRA_CQL_PORT_NUMBER=9042
+      # - CASSANDRA_CQL_PORT_NUMBER=9042
+      # By default, Cassandra autodetects the available host memory and takes as much as it can.
+      # Therefore, memory options are mandatory if multiple Cassandras are launched in the same node.
+      - MAX_HEAP_SIZE=2G
+      - HEAP_NEWSIZE=200M
+      # Datacenter name for the cluster. Default: dc1.
+      - CASSANDRA_DATACENTER=dc1
+      # Directory where the commit logs will be stored. Default: /bitnami/cassandra/data/commitlog
+      # - CASSANDRA_COMMITLOG_DIR
+  # cassandra2:
+  #   image: docker.io/bitnami/cassandra:latest
+  #   ports:
+  #     - 7001:7000
+  #     - 9043:9042
+  #   healthcheck:
+  #     test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 60
+  #   volumes:
+  #     - cassandra2_data:/bitnami
+  #   networks:
+  #     - cassandra_network
+  #   environment:
+  #     - CASSANDRA_SEEDS=cassandra1,cassandra2
+  #     - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+  #     - CASSANDRA_USER=cassandra
+  #     - CASSANDRA_PASSWORD=cassandra
+  #     - MAX_HEAP_SIZE=2G
+  #     - HEAP_NEWSIZE=200M
+  # cassandra3:
+  #   image: docker.io/bitnami/cassandra:latest
+  #   ports:
+  #     - 7002:7000
+  #     - 9044:9042
+  #   volumes:
+  #     - cassandra3_data:/bitnami
+  #   networks:
+  #     - cassandra_network
+  #   environment:
+  #     - CASSANDRA_SEEDS=cassandra1,cassandra2
+  #     - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+  #     - CASSANDRA_USER=cassandra
+  #     - CASSANDRA_PASSWORD=cassandra
+  #     - MAX_HEAP_SIZE=2G
+  #     - HEAP_NEWSIZE=200M
 
 volumes:
-  cassandra_data:
+  cassandra1_data:
     driver: local
+  # cassandra2_data:
+  #   driver: local
+  # cassandra3_data:
+  #   driver: local
+
+networks:
+  cassandra_network:

@@ -16,7 +16,7 @@ pg:
 
 .PHONY: cassandra
 cassandra:
-	docker-compose -f docker-compose-cassandra.yml up -d
+	docker-compose -f docker-compose-cassandra.yml up --remove-orphans -d
 
 .PHONY: ignite
 ignite:
