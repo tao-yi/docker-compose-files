@@ -20,4 +20,4 @@ cassandra:
 
 .PHONY: ignite
 ignite:
-	docker-compose -f docker-compose-ignite.yml up -d
+	docker-compose -f docker-compose-ignite.yml up --remove-orphans -d

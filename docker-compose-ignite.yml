@@ -2,25 +2,26 @@ version: "3.9"
 
 services:
   ignite-01:
-    image: apacheignite/ignite
+    image: apacheignite/ignite:2.10.0
     environment:
       # URL to the Ignite configuration file
       - CONFIG_URI=/config/example-ignite.xml
       # Ignite optional libs which will be included in the class path
-      # - OPTION_LIBS=
+      # - OPTION_LIBS=ignite-rest-http
       # Environment variables passed to the Ignite instance in your docker command
-      # - JVM_OPTS=
+      - JVM_OPTS=-Xms512m -Xmx512m -DIGNITE_PERFORMANCE_SUGGESTIONS_DISABLED=true # -DIGNITE_REST_START_ON_CLIENT=true
       # List of URL's to libs
       # - EXTERNAL_LIBS=
       - IGNITE_WORK_DIR=/persistence
     volumes:
       - persistence-volume:/persistence
       - ./config:/config
+
     networks:
       - ignite
     ports:
       - "10800:10800"
-      - "47500-47509:47500-47509"
+      - "47500:47500"
 
 volumes:
   persistence-volume:
