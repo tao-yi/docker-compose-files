@@ -1,30 +1,44 @@
-version: "3.9"
+version: "3.7"
 
 services:
-  ignite-01:
+  ignite-server:
     image: apacheignite/ignite:2.10.0
     environment:
       # URL to the Ignite configuration file
       - CONFIG_URI=/config/example-ignite.xml
       # Ignite optional libs which will be included in the class path
-      # - OPTION_LIBS=ignite-rest-http
+      #      - OPTION_LIBS=ignite-rest-http
       # Environment variables passed to the Ignite instance in your docker command
-      - JVM_OPTS=-Xms512m -Xmx512m -DIGNITE_PERFORMANCE_SUGGESTIONS_DISABLED=true # -DIGNITE_REST_START_ON_CLIENT=true
+      - JVM_OPTS=-Xms512m -Xmx512m -DIGNITE_PERFORMANCE_SUGGESTIONS_DISABLED=true -DIGNITE_REST_START_ON_CLIENT=true
       # List of URL's to libs
       # - EXTERNAL_LIBS=
       - IGNITE_WORK_DIR=/persistence
     volumes:
       - persistence-volume:/persistence
       - ./config:/config
-
+    #    network_mode: "host"
     networks:
       - ignite
     ports:
-      - "10800:10800"
-      - "47500:47500"
-
+      - 10800:10800
+      - 11211:11211
+      - 47100:47100
+      - 47500-47509:47500-47509
+      - 49112:49112
+#  ignite-client:
+#    image: treelab/treelab-ignite-app
+#    environment:
+#      - IGNITE_SERVER_ADDRESS=host.docker.internal:47500..47509
+#      - JVM_OPTIONS=-DIGNITE_REST_START_ON_CLIENT=true
+##    network_mode: "host"
+#    ports:
+#      - 10000:10000
+#      - 9090:9090
+#    networks:
+#      - ignite
+#    depends_on:
+#      - ignite-server
 volumes:
   persistence-volume:
-
 networks:
   ignite:

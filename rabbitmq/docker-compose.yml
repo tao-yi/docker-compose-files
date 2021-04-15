@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    volumes:
+      - ./data:/var/lib/rabbitmq/
+      - ./logs:/var/log/rabbitmq/
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - 5673:5672
+      - 15673:15672
+# rabbitmq-plugins enable rabbitmq_management
